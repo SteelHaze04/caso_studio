@@ -1,0 +1,377 @@
+---------------------------------------------------
+db.createCollection("aeroporti", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nome", "paese", "città", "fuso_orario", "coordinate" ],
+      properties: {
+        nome: {
+          bsonType: "string"
+        },
+        paese: {
+          bsonType: "string"
+        },
+        città: {
+          bsonType: "string"
+        },
+        fuso_orario: {
+          bsonType: "string"
+        },
+        coordinatre: {
+          bsonType: "string"
+        }
+      }
+    }
+  }
+})
+
+---
+
+db.createCollection("aeromobili", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["modello", "produttore", "anno_produzione", "cap_passeggeri"],
+      properties: {
+        modello: {
+          bsonType: "string"
+        },
+        produttore: {
+          bsonType: "string"
+        },
+        anno_produzione: {
+          bsonType: "int",
+          minimum: 1950
+        },
+        cap_passeggeri: {
+          bsonType: "int",
+          minimum: 0
+        }
+      }
+    }
+  }
+})
+
+---
+
+db.createCollection("compagnia_aerea")
+
+db.createCollection("gate")
+
+db.createCollection("passeggeri")
+
+db.createCollection("biglietti")
+
+db.createCollection("voli_programmati")
+
+db.createCollection("voli_operativi")
+
+-------------------------------------------------INSERT
+
+db.aereoporti.insertMany([
+  {
+    nome: "Aereoporto di Bari",
+   	paese: "Italia",
+   	città: "Bari",
+   	fuso_orario: "UTC +1",
+   	coordinate: "41°08′19.88″N 16°45′38.14″E",
+    terminal: [
+      {tipo: "Check-in"},
+      {tipo: "Imbarco"},
+      {tipo: "Sbarco"},
+      {tipo: "Ritiro bagagli"}
+    ]
+  },
+  {
+    nome: "Aereoporto di Brindisi",
+   	paese: "Italia",
+   	città: "Brindisi",
+   	fuso_orario: "UTC +1",
+   	coordinate: "51°43′16.88″N 42°43′16.10″E",
+    terminal: [
+      {tipo: "Check-in"},
+      {tipo: "Imbarco"},
+      {tipo: "Sbarco"}
+    ]
+  }
+])
+
+---
+
+db.gate.insertMany([
+  {
+    aeroportoId: ObjectId('692ed217123cd44f9f7b5b5a'),
+    terminal: "check-in",
+    stato: "disponibile"
+  },
+  {
+    aeroportoId: ObjectId('692ed217123cd44f9f7b5b59'),
+    terminal: "imbarco",
+    stato: "disponibile"
+  },
+  {
+    aeroportoId: ObjectId('692ed217123cd44f9f7b5b59'),
+    terminal: "check-in",
+    stato: "occupato"
+  },
+  {
+    aeroportoId: ObjectId('692ed217123cd44f9f7b5b5a'),
+    terminal: "imbarco",
+    stato: "occupato"
+  },
+  {
+    aeroportoId: ObjectId('692ed217123cd44f9f7b5b59'),
+    terminal: "sbarco",
+    stato: "in manutenzione"
+  }
+])
+
+---
+
+db.compagnia_aerea.insertMany([
+  {
+    nome: "Alitalia",
+    paese: "Italia",
+    gruppo: "SkyTeam"
+  },
+  {
+    nome: "Ita Airways",
+    paese: "Italia",
+    gruppo: "Star Alliance"
+  },
+  {
+    nome: "nonsochenome",
+    paese: "Cina",
+    gruppo: "Oneworld" 
+  },
+  {
+    nome: "America Airways",
+    paese: "Italia",
+    gruppo: "Oneworld"
+  },
+])
+
+---
+
+db.aeromobili.insertMany([
+  {
+    modello: "Boeing 747",
+    produttore: "Boeing",
+    anno_produzione: 1998,
+    cap_passeggeri: 250,
+    compagnia_aerea: ObjectId('692eda39123cd44f9f7b5b6f')
+  },
+  {
+    modello: "Boheing 302",
+    produttore: "Boheing",
+    anno_produzione: 2001,
+    cap_passeggeri: 3,
+    compagnia_aerea: ObjectId('692eda39123cd44f9f7b5b71')
+  },
+  {
+    modello: "MIG 22",
+    produttore: "Boeing",
+    anno_produzione: 2001,
+    cap_passeggeri: 1,
+    compagnia_aerea: ObjectId('692eda39123cd44f9f7b5b72')
+  },
+  {
+    modello: "s3h6 22",
+    produttore: "General Elettronics",
+    anno_produzione: 2011,
+    cap_passeggeri: 200,
+    compagnia_aerea: ObjectId('692eda39123cd44f9f7b5b6f')
+  },
+])
+
+---
+
+db.voli_programmati.insertMany([
+  {
+    num_volo: "E947",
+    partenza: ObjectId("692ed308123cd44f9f7b5b60"),
+    arrivo: ObjectId("692ed308123cd44f9f7b5b61"),
+    giorni: "LUN, MAR, GIO, SAB",
+    orario_partenza: "15:34",
+    orario_arrivo: "16:25",
+    durata: "51 min"
+  },
+  {
+    num_volo: "R651",
+    partenza: ObjectId("692ed308123cd44f9f7b5b61"),
+    arrivo: ObjectId("692ed308123cd44f9f7b5b60"),
+    giorni: "VEN, SAB, DOM",
+    orario_partenza: "20:00",
+    orario_arrivo: "20:58",
+    durata: "58 min"
+  }
+])
+
+---
+
+db.passeggeri.insertMany([
+  {
+    _id: ObjectId(),
+    nome: "Marco",
+    cognome: "Rossi",
+    data_nascita: ISODate("1990-05-12T00:00:00Z"),
+    prenotazioni: [
+      {
+        codicePNR: "PNR001",
+        data_prenotazione: ISODate("2025-11-20T10:30:00Z"),
+        stato: "confermata"
+      },
+      {
+        codicePNR: "PNR002",
+        data_prenotazione: ISODate("2025-11-25T09:00:00Z"),
+        stato: "check-in effettuato"
+      }
+    ]
+  },
+  {
+    _id: ObjectId(),
+    nome: "Giulia",
+    cognome: "Bianchi",
+    data_nascita: ISODate("1985-11-23T00:00:00Z"),
+    prenotazioni: [
+      {
+        codicePNR: "PNR003",
+        data_prenotazione: ISODate("2025-11-28T14:15:00Z"),
+        stato: "completata"
+      }
+    ]
+  },
+  {
+    _id: ObjectId(),
+    nome: "Luca",
+    cognome: "Verdi",
+    data_nascita: ISODate("2000-01-08T00:00:00Z"),
+    prenotazioni: [
+      {
+        codicePNR: "PNR004",
+        data_prenotazione: ISODate("2025-11-30T16:45:00Z"),
+        stato: "confermata"
+      }
+    ]
+  },
+  {
+    _id: ObjectId(),
+    nome: "Sara",
+    cognome: "Conti",
+    data_nascita: ISODate("1995-07-30T00:00:00Z"),
+    prenotazioni: [
+      {
+        codicePNR: "PNR005",
+        data_prenotazione: ISODate("2025-12-01T11:00:00Z"),
+        stato: "check-in effettuato"
+      }
+    ]
+  },
+  {
+    _id: ObjectId(),
+    nome: "Francesco",
+    cognome: "De Santis",
+    data_nascita: ISODate("1978-03-15T00:00:00Z"),
+    prenotazioni: [
+      {
+        codicePNR: "PNR006",
+        data_prenotazione: ISODate("2025-12-02T08:20:00Z"),
+        stato: "confermata"
+      }
+    ]
+  }
+])
+
+---
+
+db.biglietti.insertMany([
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    passeggero: ObjectId("692edf6a123cd44f9f7b5b79"),
+    posto: "B28"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b78"),
+    passeggero: ObjectId("692edf6a123cd44f9f7b5b7b"),
+    posto: "D08"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    passeggero: ObjectId("692edf6a123cd44f9f7b5b7a"),
+    posto: "A07"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    passeggero: ObjectId("692edf6a123cd44f9f7b5b79"),
+    posto: "C22"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b78"),
+    passeggero: ObjectId("692ee07c123cd44f9f7b5b80"),
+    posto: "B12"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b78"),
+    passeggero: ObjectId("692edf6a123cd44f9f7b5b79"),
+    posto: "E20"
+  },
+  {
+    volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    passeggero: ObjectId("692ee07c123cd44f9f7b5b80"),
+    posto: "A32"
+  }
+])
+
+---
+
+db.voli_operativi.insertMany([
+  {
+    num_volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    data: ISODate("2025-12-01"),
+    stato: "in volo",
+    gate: ObjectId("692ed287123cd44f9f7b5b5b"),
+    aeromobile: ObjectId("692ee5f8123cd44f9f7b5b8a"),
+    personale: [
+      { matricola: "A001", nome: "Mario Rossi", ruolo: "pilota" },
+      { matricola: "A002", nome: "Luca Bianchi", ruolo: "primo ufficiale" },
+      { matricola: "A003", nome: "Giulia Verdi", ruolo: "assistente di volo" }
+    ]
+  },
+  {
+    num_volo: ObjectId("692ede35123cd44f9f7b5b78"),
+    data: ISODate("2025-12-01"),
+    stato: "boarding",
+    gate: ObjectId("692ed287123cd44f9f7b5b5c"),
+    aeromobile: ObjectId("692ee5f8123cd44f9f7b5b8b"),
+    personale: [
+      { matricola: "B001", nome: "Sara Conti", ruolo: "pilota" },
+      { matricola: "B002", nome: "Francesco De Santis", ruolo: "assistente di volo" },
+      { matricola: "B003", nome: "Paolo Neri", ruolo: "personale di terra" }
+    ]
+  },
+  {
+    num_volo: ObjectId("692ede35123cd44f9f7b5b77"),
+    data: ISODate("2025-12-03"),
+    stato: "schedulato",
+    gate: ObjectId("692ed287123cd44f9f7b5b5e"),
+    aeromobile: ObjectId("692ee5f8123cd44f9f7b5b8d"),
+    personale: [
+      { matricola: "C001", nome: "Elena Gallo", ruolo: "pilota" },
+      { matricola: "C002", nome: "Davide Romano", ruolo: "tecnico di manutenzione" }
+    ]
+  },
+  {
+    num_volo: ObjectId("692ede35123cd44f9f7b5b78"),
+    data: ISODate("2025-12-04"),
+    stato: "schedulato",
+    gate: ObjectId("692ed287123cd44f9f7b5b5c"),
+    aeromobile: ObjectId("692ee5f8123cd44f9f7b5b8b"),
+    personale: [
+      { matricola: "D001", nome: "Chiara Fontana", ruolo: "pilota" },
+      { matricola: "D002", nome: "Alessandro Greco", ruolo: "primo ufficiale" },
+      { matricola: "D003", nome: "Martina Leone", ruolo: "assistente di volo" }
+    ]
+  }
+])
+
+---

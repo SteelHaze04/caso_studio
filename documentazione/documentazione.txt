@@ -1,0 +1,10 @@
+Iniziando dalla collection Aeroporti, contiene la collection embedded Terminal perché, essendo una lista di 4 tipi, non c'è la necessità che tra le due ci sia una relazione referenziale come c'è tra aeroporti e gate. 
+La collection gate ha a sua volta una relazione referenziale con voli_operativi, dato che quest'ultima richiede l'id del gate. 
+Compagnia_aerea è collegata in modo referenziale ad aeromobili perché è composta da dati più complessi, quindi ho pensato che una relazione embedded avrebbe solo reso tutto più disordinato. 
+Voli_programmati è collegato in modo referenziale ad aeroporto, dato che necessita dell'aeroporto di partenza e di arrivo, poi è collegato a voli_operativi e biglietti, che a loro volta hanno bisogno dell'id di voli_programmati.
+La collection passeggeri contiene la collection embedded delle prenotazioni ed ha una relazione referenziale con biglietti, perché oltre a richiedere l'id di voli_programmati richiede anche quello di passeggeri.
+Infine la collection voli_operativi contiene l'id di voli_programmati(per risalire a quale volo corrisponde), gate, aeromobili e la collection embedded di personale.
+
+
+
+Purtroppo l'ApI non funziona perché non sono riuscito a terminarla, ma sto caricando in ogni caso ciò che sono riuscito a fare.
